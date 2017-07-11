@@ -11,7 +11,7 @@ namespace excelXLL
     /// <summary>
     /// Excel自定义函数
     /// </summary>
-    public class Class1
+    public class MyFunctions
     {
         /// <summary>
         /// 获取身份证号码的性别
