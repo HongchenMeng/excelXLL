@@ -24,6 +24,18 @@ namespace excelXLL
             XmlNode nodecount = xmldoc.SelectSingleNode("//*[@id='" + number.ToString() + "']");
             if (nodecount != null)
             {
+                if (number.ToString().Substring(2)=="0000")
+                {
+                    string c = nodecount.Attributes["name"].Value;
+                    return c;
+                }
+                if (number.ToString().Substring(4) == "00")
+                {
+                    string a1 = nodecount.ParentNode.Attributes["name"].Value;
+                    string a2 = nodecount.Attributes["name"].Value;
+                    string a = a1 + a2;
+                    return a;
+                }
                 string s1 = nodecount.ParentNode.ParentNode.Attributes["name"].Value;
                 string s2 = nodecount.ParentNode.Attributes["name"].Value;
                 string s3 = nodecount.Attributes["name"].Value;
@@ -51,7 +63,7 @@ namespace excelXLL
                         return c;
                     }
                 }
-                return null;
+                return "未知地址！";
             }
         }
     }
