@@ -62,7 +62,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Date.cs" />
     <Compile Include="checkAreaNumbercs.cs" />
+    <Compile Include="ChineseCalendarException.cs" />
+    <Compile Include="DateHoliday.cs" />
     <Compile Include="MyFunctions.cs" />
     <Compile Include="ExcelAddin.cs" />
     <Compile Include="IDCardHelper.cs" />
