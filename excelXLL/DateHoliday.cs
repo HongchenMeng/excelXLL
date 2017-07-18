@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace excelXLL
 {
-    public partial class DateInfo
+    public partial class CalendarInfo
     {
         /// <summary>
         /// 公历假期结构，月/日/假期长度/假期名称

@@ -62,7 +62,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Date.cs" />
+    <Compile Include="CalendarLunar.cs" />
+    <Compile Include="CalendarLunarData.cs" />
+    <Compile Include="CalendarSolar.cs" />
+    <Compile Include="CalendarSolarData.cs" />
     <Compile Include="checkAreaNumbercs.cs" />
     <Compile Include="ChineseCalendarException.cs" />
     <Compile Include="DateHoliday.cs" />

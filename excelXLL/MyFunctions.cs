@@ -74,5 +74,18 @@ namespace excelXLL
             IDCardHelper idCardHelper = new IDCardHelper(ID);
             return idCardHelper.Age;
         }
+        /// <summary>
+        /// 获取干支
+        /// </summary>
+        /// <param name="dt1"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取干支")]
+        public static string GetNL([ExcelArgument(Description = "日期")] string  dt1)
+        {
+            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            CalendarInfo ci = new CalendarInfo(dt);
+            //return ci.GanZhiAnimalYearString + ci.GanZhiMonthString + ci.GanZhiDateString;
+            return ci.ChineseYearString + ci.ChineseMonthString + ci.ChineseDayString;
+        }
     }
 }
