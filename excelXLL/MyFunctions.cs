@@ -87,5 +87,62 @@ namespace excelXLL
             //return ci.GanZhiAnimalYearString + ci.GanZhiMonthString + ci.GanZhiDateString;
             return ci.ChineseYearString + ci.ChineseMonthString + ci.ChineseDayString;
         }
+        /// <summary>
+        /// 获取润月月份
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取润月月份")]
+        public static int GetLeapMonth([ExcelArgument(Description = "年份")] int year)
+        {
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+            return cc.GetLeapMonth(year);
+        }
+        /// <summary>
+        /// 获取月份天数
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取月份天数")]
+        public static int GetLeapDaysOfMonth([ExcelArgument(Description = "年份")] int year, [ExcelArgument(Description = "月份")] int month)
+        {
+            CalendarInfo cc = new CalendarInfo();
+            return cc.GetChineseMonthDays(year, month);
+        }
+        /// <summary>
+        /// 获取润月天数
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取润月天数")]
+        public static int GetDaysOfLeapdMonth([ExcelArgument(Description = "年份")] int year)
+        {
+            CalendarInfo cc = new CalendarInfo();
+            return cc.GetChineseLeapMonthDays(year);
+        }
+        /// <summary>
+        /// 获取春节月份
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节月份")]
+        public static int GetMonth([ExcelArgument(Description = "年份")] int year)
+        {
+            CalendarInfo cc = new CalendarInfo(year, 1, 1, false);
+            return cc.Date.Month;
+        }
+        /// <summary>
+        /// 获取春节日期
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节日期")]
+        public static int GetDate([ExcelArgument(Description = "年份")] int year)
+        {
+            CalendarInfo cc = new CalendarInfo(year, 1, 1, false);
+            return cc.Date.Day;
+        }
     }
 }

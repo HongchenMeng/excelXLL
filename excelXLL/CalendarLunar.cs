@@ -206,7 +206,7 @@ namespace excelXLL
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <returns></returns>
-        private int GetChineseMonthDays(int year, int month)
+        public int GetChineseMonthDays(int year, int month)
         {
             if (BitTest32((LunarDateArray[year - MinYear] & 0x0000FFFF), (16 - month)))
             {
@@ -222,7 +222,7 @@ namespace excelXLL
         /// </summary>
         /// <param name="year"></param>
         /// <returns></returns>
-        private int GetChineseLeapMonth(int year)
+        public int GetChineseLeapMonth(int year)
         {
 
             return LunarDateArray[year - MinYear] & 0xF;
@@ -233,7 +233,7 @@ namespace excelXLL
         /// </summary>
         /// <param name="year"></param>
         /// <returns></returns>
-        private int GetChineseLeapMonthDays(int year)
+       public int GetChineseLeapMonthDays(int year)
         {
             if (GetChineseLeapMonth(year) != 0)
             {

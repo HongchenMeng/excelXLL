@@ -67,7 +67,10 @@
     <Compile Include="CalendarSolar.cs" />
     <Compile Include="CalendarSolarData.cs" />
     <Compile Include="checkAreaNumbercs.cs" />
+    <Compile Include="ChinaDtaeTime.cs" />
     <Compile Include="ChineseCalendarException.cs" />
+    <Compile Include="ChineseCalendarFormatter.cs" />
+    <Compile Include="ChineseCalendarHelper.cs" />
     <Compile Include="DateHoliday.cs" />
     <Compile Include="MyFunctions.cs" />
     <Compile Include="ExcelAddin.cs" />
