@@ -97,7 +97,10 @@ namespace excelXLL
         {
             System.Globalization.ChineseLunisolarCalendar cc;
             cc = new System.Globalization.ChineseLunisolarCalendar();
-            return cc.GetLeapMonth(year);
+            int a= cc.GetLeapMonth(year);
+            if (a > 0)
+                --a;
+            return a;
         }
         /// <summary>
         /// 获取月份天数
@@ -108,8 +111,47 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取月份天数")]
         public static int GetLeapDaysOfMonth([ExcelArgument(Description = "年份")] int year, [ExcelArgument(Description = "月份")] int month)
         {
-            CalendarInfo cc = new CalendarInfo();
-            return cc.GetChineseMonthDays(year, month);
+
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+
+            int a = cc.GetLeapMonth(year);
+            if (a > 0)
+                --a;
+
+            if(a>0)
+            {
+                if(month>=a)
+                {
+                    return cc.GetDaysInMonth(year, month+1, 1);
+                }
+                else
+                {
+                    return cc.GetDaysInMonth(year, month, 1);
+                }
+            }
+            else
+            {
+                return cc.GetDaysInMonth(year, month, 1);
+            }
+            
+        }
+        /// <summary>
+        /// 获取月份天数
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取月份1~13天数")]
+        public static int GetLeapDaysOfMonth2([ExcelArgument(Description = "年份")] int year, [ExcelArgument(Description = "月份")] int month)
+        {
+
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+            if (month >= 13 & cc.GetLeapMonth(year) <= 0)
+                return 0;
+                return cc.GetDaysInMonth(year, month, 1);
+
         }
         /// <summary>
         /// 获取润月天数
@@ -119,8 +161,17 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取润月天数")]
         public static int GetDaysOfLeapdMonth([ExcelArgument(Description = "年份")] int year)
         {
-            CalendarInfo cc = new CalendarInfo();
-            return cc.GetChineseLeapMonthDays(year);
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+            int a = cc.GetLeapMonth(year);
+            if(a>0)
+            {
+                return cc.GetDaysInMonth(year, a, 1);
+            }
+            else
+            {
+                return 0;
+            }
         }
         /// <summary>
         /// 获取春节月份
@@ -130,8 +181,10 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节月份")]
         public static int GetMonth([ExcelArgument(Description = "年份")] int year)
         {
-            CalendarInfo cc = new CalendarInfo(year, 1, 1, false);
-            return cc.Date.Month;
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+
+            return cc.ToDateTime(year, 1, 1, 0, 0, 0, 0).Month;
         }
         /// <summary>
         /// 获取春节日期
@@ -141,8 +194,10 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节日期")]
         public static int GetDate([ExcelArgument(Description = "年份")] int year)
         {
-            CalendarInfo cc = new CalendarInfo(year, 1, 1, false);
-            return cc.Date.Day;
+            System.Globalization.ChineseLunisolarCalendar cc;
+            cc = new System.Globalization.ChineseLunisolarCalendar();
+
+            return cc.ToDateTime(year, 1, 1, 0, 0, 0, 0).Day;
         }
     }
 }
