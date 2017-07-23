@@ -4,7 +4,7 @@ using System.Text;
 namespace System
 {
     /// 中国常用农历日期时间类
-    class ChinaDateTime
+   public class ChinaDateTime
     {
         private int year, month, dayOfMonth;
         private bool isLeap;

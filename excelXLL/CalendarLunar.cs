@@ -144,7 +144,7 @@ namespace excelXLL
             if ((_cIsLeapYear == false) || //当年没有闰月
                  (cm < leap)) //计算月份小于闰月     
             {
-                #region ...
+
                 for (i = 1; i < cm; i++)
                 {
                     Temp = GetChineseMonthDays(cy, i);//计算非闰月天数
@@ -157,11 +157,11 @@ namespace excelXLL
                     throw new ChineseCalendarException("不合法的农历日期");
                 }
                 offset = offset + cd; //加上当月的天数
-                #endregion
+
             }
             else   //是闰年，且计算月份大于或等于闰月
             {
-                #region ...
+
                 for (i = 1; i < cm; i++)
                 {
                     Temp = GetChineseMonthDays(cy, i); //计算非闰月天数
@@ -194,7 +194,7 @@ namespace excelXLL
                     }
                     offset = offset + cd;
                 }
-                #endregion
+
             }
 
 
