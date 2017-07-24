@@ -9,12 +9,12 @@ namespace excelXLL
         /// <summary>
         /// 公历与农历互转，公历最小时间
         /// </summary>
-        private static DateTime MinDay = new DateTime(1900, 1, 30);
+        private static DateTime MinDay = new DateTime(1900, 1, 31);
 
         /// <summary>
         /// 公历与农历互转，公历最大时间
         /// </summary>
-        private static DateTime MaxDay = new DateTime(2099, 12, 31);
+        private static DateTime MaxDay = new DateTime(2100, 12, 31);
 
         /// <summary>
         /// 农历月份字符：正、二、三……十、冬、腊
@@ -30,6 +30,7 @@ namespace excelXLL
         /// 农历数据
         /// </summary>
         private static int[] LunarDateArray = new int[] {
+            0x84B6BF,
      0x04AE53,0x0A5748,0x5526BD,0x0D2650,0x0D9544,
      0x46AAB9,0x056A4D,0x09AD42,0x24AEB6,0x04AE4A, //1901-1910
 
@@ -88,7 +89,8 @@ namespace excelXLL
      0x04B64E,0x0A5743,0x452738,0x0D264A,0x8E933E, //2081-2090
 
      0x0D5252,0x0DAA47,0x66B53B,0x056D4F,0x04AE45,
-     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 //2091-2099
+     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 ,0x005249 //2091-2100
+
         };
 
         #endregion 农历常量
@@ -431,7 +433,7 @@ namespace excelXLL
             for (; lunarMonth <= 13; lunarMonth++)
             {
                 int daysOfLunarMonth = 29;
-                if (((lunarData >> (6 + lunarMonth)) & 0x1) == 1)//大月就30天
+                if (((lunarData >> (20 - lunarMonth)) & 0x1) == 1)//大月就30天
                 {
                     daysOfLunarMonth = 30;
                 }
@@ -462,7 +464,7 @@ namespace excelXLL
             //        luanr_date.leap = true;
             //}
 
-            return LunarYear + "-" + lunarMonth + "-" + LunarDay;
+            return lunarYear + "-" + lunarMonth + "-" + lunarDay;
         }
 
         /// <summary>
