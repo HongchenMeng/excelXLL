@@ -212,5 +212,47 @@ namespace excelXLL
             string st = dl.GetLunarString(dt);
             return st;
         }
+        /// <summary>
+        /// 获取农历
+        /// </summary>
+        /// <param name="dt1">公历字符串 yyyyMMdd</param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetLunarDate2([ExcelArgument(Description = "年份")] string dt1)
+        {
+            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            DateTimeLunar dl = new DateTimeLunar();
+            dl.SolarDate = dt;
+
+            return dl.GetLunarDate(LunarString.润六月初八);
+        }
+        /// <summary>
+        /// 获取农历
+        /// </summary>
+        /// <param name="dt1">公历字符串 yyyyMMdd</param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetLunarDate3([ExcelArgument(Description = "年份")] string dt1)
+        {
+            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            DateTimeLunar dl = new DateTimeLunar();
+            dl.SolarDate = dt;
+
+            return dl.GetLunarDate(LunarString.润6月8日);
+        }
+        /// <summary>
+        /// 获取农历
+        /// </summary>
+        /// <param name="dt1">公历字符串 yyyyMMdd</param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetLunarDate4([ExcelArgument(Description = "年份")] string dt1)
+        {
+            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            DateTimeLunar dl = new DateTimeLunar(dt);
+            //dl.SolarDate = dt;
+
+            return dl.GetLunarDate(LunarString.润6月8日);
+        }
     }
 }

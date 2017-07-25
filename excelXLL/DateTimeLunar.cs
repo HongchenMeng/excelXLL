@@ -4,12 +4,13 @@ namespace excelXLL
 {
     internal class DateTimeLunar
     {
+      
         #region 农历常量
 
         /// <summary>
         /// 公历与农历互转，公历最小时间
         /// </summary>
-        private static DateTime MinDay = new DateTime(1900, 1, 30);
+        private static DateTime MinDay = new DateTime(1901, 1, 1);
 
         /// <summary>
         /// 公历与农历互转，公历最大时间
@@ -126,27 +127,44 @@ namespace excelXLL
         private int _LunarYear;
 
         /// <summary>
-        /// 私有变量，农历月份
+        /// 私有变量，农历月份1~13
         /// </summary>
         private int _LunarMonth;
-
+        /// <summary>
+        /// 私有变量，农历实际月份1~12
+        /// </summary>
+        private int _LunarMonth2;
         /// <summary>
         /// 私有变量，农历日
         /// </summary>
         private int _LunarDay;
 
         /// <summary>
-        /// 私有变量，公历年是否闰年
+        /// 私有变量，公历年份
         /// </summary>
-        private bool _IsLeapSolarYear;
+        private int _SolarYear;
+
+        /// <summary>
+        /// 私有变量，公历月份
+        /// </summary>
+        private int _SolarMonth;
+
+        /// <summary>
+        /// 私有变量，公历日
+        /// </summary>
+        private int _SolarDay;
 
         /// <summary>
         /// 私有变量，农历年是否闰年
         /// </summary>
         private bool _IsLeapLunarYear;
+        /// <summary>
+        /// 私有变量，该月是否农历润月
+        /// </summary>
+        private bool _IsLeapLunarMonth;
 
         /// <summary>
-        /// 私有变量，农历年哪个月是润月，6代表润五月
+        /// 私有变量，农历年哪个月是润月，6代表润六月，0表示该年无润月
         /// </summary>
         private int _WhereLeapLunarMonth;
 
@@ -156,31 +174,22 @@ namespace excelXLL
         private int[] _DaysOfLunarMonth = { 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 0 };
 
         /// <summary>
-        /// 私有变量，农历年全年共有多少天
+        /// 私有变量，公历日期是农历年的第几天
         /// </summary>
-        private int _DaysOfLunarYear = 348; //29天 X 12个月
-
-        /// <summary>
-        /// 私有变量，该公历年春节对应的公历日期
-        /// </summary>
-        public DateTime DateTimeOfSpringFestival;
+        private int _DayOfLunarYear;
 
         #endregion 私有变量
 
         #region 公共变量
 
+        /// <summary>
+        /// 公历能否转农历
+        /// </summary>
         public bool Solar2Lunar
         {
             get
             {
-                if (_SolarDate != DateTime.Parse("0001-01-01"))
-                {
-                    return _Solar2Lunar;
-                }
-                else
-                {
-                    return false;
-                }
+                return _Solar2Lunar;
             }
         }
 
@@ -189,6 +198,11 @@ namespace excelXLL
         /// </summary>
         public DateTime SolarDate
         {
+            set
+            {
+                _SolarDate = value;
+                GetLunar();
+            }
             get
             {
                 return _SolarDate;
@@ -206,14 +220,7 @@ namespace excelXLL
             }
             get
             {
-                if (this.SolarDate < this.DateTimeOfSpringFestival)
-                {
-                    return SolarDate.Year - 1;
-                }
-                else
-                {
-                    return SolarDate.Year;
-                }
+                return _LunarYear;
             }
         }
 
@@ -248,17 +255,6 @@ namespace excelXLL
         }
 
         /// <summary>
-        /// 公历年是否闰年
-        /// </summary>
-        public bool IsLeapSolarYear
-        {
-            get
-            {
-                return _IsLeapSolarYear;
-            }
-        }
-
-        /// <summary>
         /// 农历年是否闰年
         /// </summary>
         public bool IsLeapLunarYear
@@ -287,17 +283,6 @@ namespace excelXLL
             }
         }
 
-        /// <summary>
-        /// 农历年全年共有多少天
-        /// </summary>
-        public int DaysOfLunarYear
-        {
-            get
-            {
-                return _DaysOfLunarYear;
-            }
-        }
-
         #endregion 公共变量
 
         #region 构造方法
@@ -308,8 +293,7 @@ namespace excelXLL
 
         public DateTimeLunar(DateTime datetime)
         {
-            _SolarDate = datetime;
-            Solar2LunarEnabled(_SolarDate);
+           this.SolarDate  = datetime;
         }
 
         #endregion 构造方法
@@ -326,33 +310,98 @@ namespace excelXLL
             return LunarDateArray[year - MinDay.Year];
         }
 
-        ///// <summary>
-        ///// 获取春节对应的公历日期
-        ///// </summary>
-        //private void GetLuanarData()
-        //{
-        //    _LunarData = GetLunarData(_SolarDate.Year);
-        //    //if (((OldData.LunarCalendarTable[year - 1901] & 0x0060) >> 5) == 1)
-        //    //    month = 1;
-        //    //else
-        //    //    month = 2;
-        //}
-
-        #endregion 私有方法
-
-        #region 公共方法
-
         /// <summary>
-        /// 设置公历年能否转换农历年，公历年日期必须在最小转换日期和最大转换日期之间才能转换
+        /// 获取农历相关信息
         /// </summary>
-        public void Solar2LunarEnabled(DateTime dt)
+        private void GetLunar()
         {
-            if (dt >= MinDay && dt <= MaxDay)
+            if (_SolarDate >= MinDay && _SolarDate <= MaxDay)
             {
                 _Solar2Lunar = true;
             }
-        }
+            else
+            {
+                _Solar2Lunar = false;
+            }
+            if (!_Solar2Lunar)
+            {
+                return;
+            }
+            _SolarYear = _SolarDate.Year;
+            _LunarYear = GetLunarYear(_SolarDate);
+            _LunarData = LunarDateArray[_LunarYear - MinDay.Year];
+            _DayOfLunarYear = DayOfLunarYear(_SolarDate);
 
+            _LunarMonth = 1;
+
+            for (; _LunarMonth <= 13; _LunarMonth++)
+            {
+                int daysOfLunarMonth = 29;
+                if (((_LunarData >> (20 - _LunarMonth)) & 0x1) == 1)//大月就30天
+                {
+                    daysOfLunarMonth = 30;
+                }
+                if (_DayOfLunarYear <= daysOfLunarMonth)
+                {
+                    break;
+                }
+                else
+                {
+                    _DayOfLunarYear -= daysOfLunarMonth;
+                }
+            }
+            _LunarDay = _DayOfLunarYear;
+
+            //处理润月
+           // int leapMonth = (_LunarData >> 20) & 0xf;
+            _WhereLeapLunarMonth = (_LunarData >> 20) & 0xf;
+            //否润年
+            if (_WhereLeapLunarMonth > 0)
+            {
+                _IsLeapLunarYear = true;
+            }
+            else
+            {
+                _IsLeapLunarYear = false;
+            }
+            //是否润月
+            if((_WhereLeapLunarMonth+1)==_LunarMonth)
+            {
+                _IsLeapLunarMonth = true;
+            }
+            else
+            {
+                _IsLeapLunarMonth = false;
+            }
+            //润年时，实际月份
+            if(_LunarMonth>_WhereLeapLunarMonth)
+            {
+                _LunarMonth2 = _LunarMonth - 1;
+            }
+            else
+            {
+                _LunarMonth2 = _LunarMonth;
+            }
+
+        }
+        #endregion 私有方法
+
+        #region 公共方法
+        public string GetLunarDate(LunarString LunarString)
+        {
+            string s = null;
+            if (_IsLeapLunarMonth)
+                s = "润";
+            switch(LunarString)
+            {
+                case LunarString.润六月初八:
+                    return s + MonthStr[_LunarMonth2 - 1] + "月" + _LunarDay + "日";
+                case LunarString.润6月8日:
+                    return s + _LunarMonth2 + "月" + _LunarDay + "日";
+                   
+            }
+            return null;
+        }
         /// <summary>
         /// 返回指定日期时间春节所对应的公历日期
         /// </summary>
@@ -395,18 +444,6 @@ namespace excelXLL
         public int GetLunarYear(DateTime dt)
         {
             DateTime dtSpringFestival = GetSpringFestivalDate(dt);
-
-            return GetLunarYear(dt, dtSpringFestival);
-        }
-
-        /// <summary>
-        /// 返回公历日期对应的农历年份
-        /// </summary>
-        /// <param name="dt">公历日期</param>
-        /// <param name="dtSpringFestival">公历年春节对应的公历日期</param>
-        /// <returns></returns>
-        public int GetLunarYear(DateTime dt, DateTime dtSpringFestival)
-        {
             int year = dt.Year;
             if (dt < dtSpringFestival)
             {
@@ -418,11 +455,16 @@ namespace excelXLL
             }
         }
 
+        /// <summary>
+        /// 获取农历年月日
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         public string GetLunarString(DateTime dt)
         {
             int solarYear = dt.Year;
             int lunarYear = GetLunarYear(dt);
-            int lunarMonth=1;
+            int lunarMonth = 1;
             int lunarDay;//农历日子
             int lunarData = GetLunarData(lunarYear);
 
@@ -442,25 +484,14 @@ namespace excelXLL
                 else
                 {
                     dayOfLunarYear -= daysOfLunarMonth;
-
                 }
             }
             lunarDay = dayOfLunarYear;
             int leapMonth = (lunarData >> 20) & 0xf;
-            if(leapMonth >0 && leapMonth <lunarMonth)
+            if (leapMonth > 0 && leapMonth < lunarMonth)
             {
                 lunarMonth--;
-
             }
-            //int leap_month = (LUNAR_YEARS[year_index] >> 20) & 0xf;
-            //if (leap_month > 0 && leap_month < luanr_month)
-            //{
-            //    luanr_month--;
-            //    //如果当前月为闰月，设置闰月标志
-
-            //    if (luanr_month == leap_month)
-            //        luanr_date.leap = true;
-            //}
 
             return LunarYear + "-" + lunarMonth + "-" + LunarDay;
         }
@@ -550,9 +581,36 @@ namespace excelXLL
                 DateTime dt2 = new DateTime(year - 1, 12, 31);
                 d = DayOfSolarYear(dt2) - DayOfSolarYear(dt2.Year) + 1 + DayOfSolarYear(dt);
             }
+            
             return d;
         }
 
         #endregion 公共方法
+       
     }
+    #region 枚举
+    enum LunarString
+    {
+        润六月初八,
+        润6月8日,
+        二零一七年润六月初八,
+        //2017年润6月8日,
+
+    }
+    enum LunarMonth
+    {
+        一月,
+        二月,
+        三月,
+        四月,
+        五月,
+        六月,
+        七月,
+        八月,
+        九月,
+        十月,
+        冬月,
+        腊月,
+    }
+    #endregion
 }
