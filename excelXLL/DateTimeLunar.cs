@@ -473,7 +473,7 @@ namespace excelXLL
             for (; lunarMonth <= 13; lunarMonth++)
             {
                 int daysOfLunarMonth = 29;
-                if (((lunarData >> (6 + lunarMonth)) & 0x1) == 1)//大月就30天
+                if (((lunarData >> (20-lunarMonth)) & 0x1) == 1)//大月就30天
                 {
                     daysOfLunarMonth = 30;
                 }
@@ -493,7 +493,7 @@ namespace excelXLL
                 lunarMonth--;
             }
 
-            return LunarYear + "-" + lunarMonth + "-" + LunarDay;
+            return lunarYear + "-" + lunarMonth + "-" + lunarDay;
         }
 
         /// <summary>
