@@ -10,27 +10,34 @@ namespace excelXLL
         /// <summary>
         /// 公历与农历互转，公历最小时间
         /// </summary>
-        private static DateTime MinDay = new DateTime(1901, 1, 1);
+        private static DateTime MinDay = new DateTime(1900, 1, 31);
 
         /// <summary>
         /// 公历与农历互转，公历最大时间
         /// </summary>
-        private static DateTime MaxDay = new DateTime(2099, 12, 31);
+        private static DateTime MaxDay = new DateTime(2100, 12, 31);
 
         /// <summary>
         /// 农历月份字符：正、二、三……十、冬、腊
         /// </summary>
-        private static string[] MonthStr = { "正", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "九", "拾", "冬", "腊" };
+        private static string MonthStr = "正贰叁肆伍陆柒捌九拾冬腊";
 
         /// <summary>
         /// 农历日子字符，初、十、廿、卅
         /// </summary>
-        private static string[] DayStr = { "初", "十", "廿", "卅" };
+        private static string DayStr1 = "初十廿卅";
+        private static string DayStr2 = "〇一二三四五六七八九";
+
+        private static string zhiStr = "子丑寅卯辰巳午未申酉戌亥";
+        private static string animalStr = "鼠牛虎兔龙蛇马羊猴鸡狗猪";
+
+        //private static string nStr2 = "初十廿卅";
 
         /// <summary>
         /// 农历数据
         /// </summary>
         private static int[] LunarDateArray = new int[] {
+            0x84B6BF,
      0x04AE53,0x0A5748,0x5526BD,0x0D2650,0x0D9544,
      0x46AAB9,0x056A4D,0x09AD42,0x24AEB6,0x04AE4A, //1901-1910
 
@@ -89,7 +96,7 @@ namespace excelXLL
      0x04B64E,0x0A5743,0x452738,0x0D264A,0x8E933E, //2081-2090
 
      0x0D5252,0x0DAA47,0x66B53B,0x056D4F,0x04AE45,
-     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 //2091-2099
+     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 ,0x005249,//2091-2100
         };
 
         #endregion 农历常量
@@ -125,11 +132,20 @@ namespace excelXLL
         /// 私有变量，农历年份
         /// </summary>
         private int _LunarYear;
+        /// <summary>
+        /// 私有变量，农历年份中文
+        /// </summary>
+        private string _LunarYearChinese;
 
         /// <summary>
         /// 私有变量，农历月份1~13
         /// </summary>
         private int _LunarMonth;
+        /// <summary>
+        /// 
+        /// </summary>
+        private string _LunarMonth2Chinese;
+
         /// <summary>
         /// 私有变量，农历实际月份1~12
         /// </summary>
@@ -138,7 +154,7 @@ namespace excelXLL
         /// 私有变量，农历日
         /// </summary>
         private int _LunarDay;
-
+        private string _LunarDayChinese;
         /// <summary>
         /// 私有变量，公历年份
         /// </summary>
@@ -390,17 +406,65 @@ namespace excelXLL
         public string GetLunarDate(LunarString LunarString)
         {
             string s = null;
+            string r = null;
+            string daystr = null;
             if (_IsLeapLunarMonth)
-                s = "润";
+                r = "润";
             switch(LunarString)
             {
-                case LunarString.润六月初八:
-                    return s + MonthStr[_LunarMonth2 - 1] + "月" + _LunarDay + "日";
-                case LunarString.润6月8日:
-                    return s + _LunarMonth2 + "月" + _LunarDay + "日";
+                case LunarString.农历润六月初八:
+                    if(_LunarDay==10 | _LunarDay==20 |_LunarDay==30)
+                    {
+                        daystr = "十";
+                    }
+                    else
+                    {
+                        daystr= DayStr2[_LunarDay % 10].ToString();
+                    }
+                    s = string.Format("农历{0}月{1}", r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString()+daystr);
+                    break;
+                case LunarString.农历润六月:
+                    if (_LunarDay == 10 | _LunarDay == 20 | _LunarDay == 30)
+                    {
+                        daystr = "十";
+                    }
+                    else
+                    {
+                        daystr = DayStr2[_LunarDay % 10].ToString();
+                    }
+
+                    if(_LunarDay==1)
+                    {
+                        s = string.Format("农历{0}月", r + MonthStr[_LunarMonth2 - 1]);
+                    }
+                    else
+                    {
+                        s = string.Format("农历{0}月{1}", r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString() + daystr);
+                    }
+                    break;
+                case LunarString.农历二零一七年润六月初八:
+                    for (int i = 0; i < _LunarYear.ToString().Length; i++)
+                    {
+                        _LunarYearChinese = _LunarYearChinese + DayStr2.Substring(int.Parse(_LunarYear.ToString().Substring(i, 1)), 1);
+                    }
+
+                    if (_LunarDay == 10 | _LunarDay == 20 | _LunarDay == 30)
+                    {
+                        daystr = "十";
+                    }
+                    else
+                    {
+                        daystr = DayStr2[_LunarDay % 10].ToString();
+                    }
+                    s = string.Format("农历{0}年{1}月{2}", _LunarYearChinese, r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString() + daystr);
+                    break;
+                default:
+                    break;
+                    
+                   // return r + _LunarMonth2 + "月" + _LunarDay + "日";
                    
             }
-            return null;
+            return s;
         }
         /// <summary>
         /// 返回指定日期时间春节所对应的公历日期
@@ -589,28 +653,29 @@ namespace excelXLL
        
     }
     #region 枚举
-    enum LunarString
+   public enum LunarString
     {
-        润六月初八,
-        润6月8日,
-        二零一七年润六月初八,
-        //2017年润6月8日,
+        /// <summary>
+        /// 农历月、日
+        /// </summary>
+        农历润六月初八,
+        /// <summary>
+        /// 农历月、日。若逢初一则省略日
+        /// </summary>
+        农历润六月,
+        /// <summary>
+        /// 农历年、月、日
+        /// </summary>
+        农历二零一七年润六月初八,
+        /// <summary>
+        /// 农历月、日（阿拉伯数字）
+        /// </summary>
+        农历润6月8日,
+        /// <summary>
+        /// 农历年、月、日（阿拉伯数字）
+        /// </summary>
+        农历2017年润6月8日,
 
-    }
-    enum LunarMonth
-    {
-        一月,
-        二月,
-        三月,
-        四月,
-        五月,
-        六月,
-        七月,
-        八月,
-        九月,
-        十月,
-        冬月,
-        腊月,
     }
     #endregion
 }

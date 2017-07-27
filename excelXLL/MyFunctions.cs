@@ -224,7 +224,7 @@ namespace excelXLL
             DateTimeLunar dl = new DateTimeLunar();
             dl.SolarDate = dt;
 
-            return dl.GetLunarDate(LunarString.润六月初八);
+            return dl.GetLunarDate(LunarString.农历润六月初八);
         }
         /// <summary>
         /// 获取农历
@@ -238,7 +238,7 @@ namespace excelXLL
             DateTimeLunar dl = new DateTimeLunar();
             dl.SolarDate = dt;
 
-            return dl.GetLunarDate(LunarString.润6月8日);
+            return dl.GetLunarDate(LunarString.农历润6月8日);
         }
         /// <summary>
         /// 获取农历
@@ -252,7 +252,22 @@ namespace excelXLL
             DateTimeLunar dl = new DateTimeLunar(dt);
             //dl.SolarDate = dt;
 
-            return dl.GetLunarDate(LunarString.润6月8日);
+            return dl.GetLunarDate(LunarString.农历2017年润6月8日);
+        }
+        /// <summary>
+        /// 获取农历
+        /// </summary>
+        /// <param name="dt1">公历字符串</param>
+        /// <param name="ls">农历日期格式</param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetLunarDate5([ExcelArgument(Description = "年份")] string dt1, [ExcelArgument(Description = "农历日期格式")] int ls)
+        {
+            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            DateTimeLunar dl = new DateTimeLunar(dt);
+            //dl.SolarDate = dt;
+
+            return dl.GetLunarDate((LunarString)ls);
         }
     }
 }
