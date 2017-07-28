@@ -25,8 +25,8 @@ namespace excelXLL
         /// <summary>
         /// 农历日子字符，初、十、廿、卅
         /// </summary>
-        private static string DayStr1 = "初十廿卅";
-        private static string DayStr2 = "〇一二三四五六七八九";
+        private static string NumeralsChinese2 = "初十廿卅";
+        private static string NumeralsChinese = "〇一二三四五六七八九";
 
         private static string zhiStr = "子丑寅卯辰巳午未申酉戌亥";
         private static string animalStr = "鼠牛虎兔龙蛇马羊猴鸡狗猪";
@@ -104,12 +104,12 @@ namespace excelXLL
         /// <summary>
         /// 公历每月第一天是公历年中的第几天（非润年）
         /// </summary>
-        private static int[] NormalYday = { 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 };
+        private static int[] SolarNormalYday = { 1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 };
 
         /// <summary>
         /// 公历每月第一天是公历年中的第几天（润年）
         /// </summary>
-        private static int[] LeapYday = { 1, 32, 61, 92, 122, 153, 183, 214, 245, 275, 306, 336 };
+        private static int[] SolarLeapYday = { 1, 32, 61, 92, 122, 153, 183, 214, 245, 275, 306, 336 };
 
         #region 私有变量
 
@@ -141,19 +141,22 @@ namespace excelXLL
         /// 私有变量，农历月份1~13
         /// </summary>
         private int _LunarMonth;
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _LunarMonth2Chinese;
 
         /// <summary>
         /// 私有变量，农历实际月份1~12
         /// </summary>
         private int _LunarMonth2;
         /// <summary>
+        /// 私有变量，农历日中文
+        /// </summary>
+        private string _LunarMonth2Chinese;
+        /// <summary>
         /// 私有变量，农历日
         /// </summary>
         private int _LunarDay;
+        /// <summary>
+        /// 私有变量，农历日中文
+        /// </summary>
         private string _LunarDayChinese;
         /// <summary>
         /// 私有变量，公历年份
@@ -178,6 +181,7 @@ namespace excelXLL
         /// 私有变量，该月是否农历润月
         /// </summary>
         private bool _IsLeapLunarMonth;
+        private string _LeapLunarMonthChinese;
 
         /// <summary>
         /// 私有变量，农历年哪个月是润月，6代表润六月，0表示该年无润月
@@ -400,6 +404,36 @@ namespace excelXLL
             }
 
         }
+        /// <summary>
+        /// 获取农历月、日中文表示文字
+        /// </summary>
+        private void GetLunarMonthAndDayChinese()
+        {
+            string daystr = null;
+            if (_LunarDay == 10 | _LunarDay == 20 | _LunarDay == 30)
+            {
+                daystr = "十";
+            }
+            else
+            {
+                daystr = NumeralsChinese[_LunarDay % 10].ToString();
+            }
+            _LunarDayChinese = NumeralsChinese2[(int)_LunarDay / 10].ToString() + daystr;
+
+            if (_IsLeapLunarMonth)
+            {
+                _LeapLunarMonthChinese = "润";
+            }
+            else
+            {
+                _LeapLunarMonthChinese = null;
+            }
+
+            _LunarMonth2Chinese = MonthStr[_LunarMonth2 - 1].ToString();
+
+
+        }
+
         #endregion 私有方法
 
         #region 公共方法
@@ -407,62 +441,37 @@ namespace excelXLL
         {
             string s = null;
             string r = null;
-            string daystr = null;
-            if (_IsLeapLunarMonth)
-                r = "润";
             switch(LunarString)
             {
                 case LunarString.农历润六月初八:
-                    if(_LunarDay==10 | _LunarDay==20 |_LunarDay==30)
-                    {
-                        daystr = "十";
-                    }
-                    else
-                    {
-                        daystr= DayStr2[_LunarDay % 10].ToString();
-                    }
-                    s = string.Format("农历{0}月{1}", r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString()+daystr);
+                    GetLunarMonthAndDayChinese();
+                    s = string.Format("农历 {0}月{1}",_LeapLunarMonthChinese+ _LunarMonth2Chinese, _LunarDayChinese);
                     break;
                 case LunarString.农历润六月:
-                    if (_LunarDay == 10 | _LunarDay == 20 | _LunarDay == 30)
+                    GetLunarMonthAndDayChinese();
+                    if (_LunarDay==1)
                     {
-                        daystr = "十";
+                        s = string.Format("农历 {0}月", _LeapLunarMonthChinese + _LunarMonth2Chinese);
                     }
                     else
                     {
-                        daystr = DayStr2[_LunarDay % 10].ToString();
-                    }
-
-                    if(_LunarDay==1)
-                    {
-                        s = string.Format("农历{0}月", r + MonthStr[_LunarMonth2 - 1]);
-                    }
-                    else
-                    {
-                        s = string.Format("农历{0}月{1}", r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString() + daystr);
+                        s = string.Format("农历 {0}月{1}", _LeapLunarMonthChinese + _LunarMonth2Chinese, _LunarDayChinese);
                     }
                     break;
                 case LunarString.农历二零一七年润六月初八:
                     for (int i = 0; i < _LunarYear.ToString().Length; i++)
                     {
-                        _LunarYearChinese = _LunarYearChinese + DayStr2.Substring(int.Parse(_LunarYear.ToString().Substring(i, 1)), 1);
+                        _LunarYearChinese = _LunarYearChinese + NumeralsChinese.Substring(int.Parse(_LunarYear.ToString().Substring(i, 1)), 1);
                     }
 
-                    if (_LunarDay == 10 | _LunarDay == 20 | _LunarDay == 30)
-                    {
-                        daystr = "十";
-                    }
-                    else
-                    {
-                        daystr = DayStr2[_LunarDay % 10].ToString();
-                    }
-                    s = string.Format("农历{0}年{1}月{2}", _LunarYearChinese, r + MonthStr[_LunarMonth2 - 1], DayStr1[(int)_LunarDay / 10].ToString() + daystr);
+                    GetLunarMonthAndDayChinese();
+                    s = string.Format("农历 {0}年{1}月{2}", _LunarYearChinese, _LeapLunarMonthChinese + _LunarMonth2Chinese, _LunarDayChinese);
+                    break;
+                case LunarString.农历润6月8日:
+                    s = string.Format("农历 {0}月{1}日", _LunarYearChinese + _LunarMonth2, _LunarDay);
                     break;
                 default:
-                    break;
-                    
-                   // return r + _LunarMonth2 + "月" + _LunarDay + "日";
-                   
+                    break;  
             }
             return s;
         }
@@ -605,11 +614,11 @@ namespace excelXLL
             int[] Yday;//每月1日是公历年的第几天
             if (LeapSolarYear(dt))
             {
-                Yday = LeapYday;
+                Yday = SolarLeapYday;
             }
             else
             {
-                Yday = NormalYday;
+                Yday = SolarNormalYday;
             }
 
             return Yday[month - 1] + day - 1;
