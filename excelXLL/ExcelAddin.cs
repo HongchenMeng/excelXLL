@@ -23,6 +23,7 @@ namespace excelXLL
             IntelliSenseServer.Register();
             //ExcelDna.Logging.LogDisplay.Show();
             //ExcelDna.Logging.LogDisplay.DisplayOrder = ExcelDna.Logging.DisplayOrder.NewestFirst;
+            NavigationOfSheet navigationOfSheet = new NavigationOfSheet();
         }
 
         public void AutoClose()
