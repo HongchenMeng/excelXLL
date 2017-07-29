@@ -24,8 +24,13 @@ namespace ConsoleApplication1
             //Console.WriteLine(cc.GetMonth(DateTime.ParseExact("20170723","yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)));//返回日期对应农历的月份，1~13，有闰月需要额外处理
             //Console.WriteLine(cc.GetDayOfMonth(DateTime.ParseExact("20170127", "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture)));//返回日期对应农历的日期
             //Console.WriteLine(cc.ToDateTime(2017,1,1,0,0,0,0));//返回农历日期对应的公历日期
-            
-            
+            DateTime dt1 = new DateTime(2017, 1, 1);
+            DateTime dt2 = new DateTime(2017, 1, 2);
+
+            TimeSpan ts1 = dt2.Subtract(dt1);
+            TimeSpan ts2 = dt1.Subtract(dt1);
+            Console.WriteLine(ts1.Days);
+            Console.WriteLine(ts2.Days);
 
             Console.ReadLine();
         }
