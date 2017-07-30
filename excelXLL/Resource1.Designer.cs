@@ -95,19 +95,29 @@ namespace excelXLL {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap img_star_blue {
+        internal static System.Drawing.Bitmap img_star_red {
             get {
-                object obj = ResourceManager.GetObject("img_star_blue", resourceCulture);
+                object obj = ResourceManager.GetObject("img_star_red", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
+        internal static byte[] sxwnl {
+            get {
+                object obj = ResourceManager.GetObject("sxwnl", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap img_star_red {
+        internal static System.Drawing.Bitmap wnl {
             get {
-                object obj = ResourceManager.GetObject("img_star_red", resourceCulture);
+                object obj = ResourceManager.GetObject("wnl", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

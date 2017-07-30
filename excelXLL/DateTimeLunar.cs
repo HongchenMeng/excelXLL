@@ -301,13 +301,25 @@ namespace excelXLL
         public DateTimeLunar()
         {
         }
-
+        /// <summary>
+        /// 使用日期来构造
+        /// </summary>
+        /// <param name="datetime"></param>
         public DateTimeLunar(DateTime datetime)
         {
            this.SolarDate  = datetime;
             GetLunar();
         }
-
+        /// <summary>
+        /// 使用8位数日期字符串来构造
+        /// </summary>
+        /// <param name="datetimeStr"></param>
+        public DateTimeLunar(string datetimeStr)
+        {
+            DateTime dt = DateTime.ParseExact(datetimeStr, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+            this.SolarDate = dt;
+            GetLunar();
+        }
         #endregion 构造方法
 
         #region 私有方法
@@ -346,7 +358,6 @@ namespace excelXLL
           
             DateTime dt2 = GetLunarFirstDayToSolarDate(_SolarDate.Year);//该年春节日期
 
-            DateTime dt;
             if(_SolarDate<dt2)//农历年份比公历少1
             {
                 DateTime dt1 = GetLunarFirstDayToSolarDate(_SolarDate.Year - 1);//前一年春节日期
@@ -445,7 +456,6 @@ namespace excelXLL
         public string GetLunarDate(LunarString LunarString)
         {
             string s = null;
-            string r = null;
             switch(LunarString)
             {
                 case LunarString.农历润六月初八:
@@ -655,6 +665,7 @@ namespace excelXLL
         农历2017年润6月8日,
 
     }
+
   struct LunarTime
     {
         int lunarYear;

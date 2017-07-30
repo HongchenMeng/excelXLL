@@ -86,7 +86,20 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
         public static string GetLunarDate([ExcelArgument(Description = "年份")] string dt1, [ExcelArgument(Description = "农历日期格式")] int ls)
         {
-            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
+         
+            DateTimeLunar dl = new DateTimeLunar(dt1);
+
+            return dl.GetLunarDate((LunarString)ls);
+        }
+        /// <summary>
+        /// 获取农历
+        /// </summary>
+        /// <param name="dt">公历日期</param>
+        /// <param name="ls"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetLunarDate2([ExcelArgument(Description = "年份")] DateTime dt, [ExcelArgument(Description = "农历日期格式")] int ls)
+        {
             DateTimeLunar dl = new DateTimeLunar(dt);
             //dl.SolarDate = dt;
 

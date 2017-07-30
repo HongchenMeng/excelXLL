@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using ExcelDna.Integration;
 using Microsoft.Office.Interop.Excel;
 using ExcelDna.IntelliSense;
+using System.Diagnostics;
 //using Microsoft.Office.Core;
 //using IRibbonC = Microsoft.Office.Core.IRibbonControl;
 // TODO:   按照以下步骤启用功能区(XML)项: 
@@ -39,12 +40,13 @@ namespace excelXLL
     [ComVisible(true)]
     public class Ribbon1 : ExcelRibbon
     {
+       // ExcelAddin excelAddin = new ExcelAddin();
         /// <summary>
         /// Excel应用程序
         /// </summary>
         public  Microsoft.Office.Interop.Excel.Application xlApp = (Microsoft.Office.Interop.Excel.Application)ExcelDnaUtil.Application;
 
-        private Microsoft.Office.Tools.CustomTaskPaneCollection CustomTaskPanes;
+       
 
         private ExcelDna.Integration.CustomUI.IRibbonUI ribbon;
         //private ExcelDnaIRibbons ribbon;
@@ -67,9 +69,9 @@ namespace excelXLL
         private bool togbtnTaskPaneOfSheetFloatbool;
 
         //定义用户控件
-        private NavigationOfSheet navigationOfsheet = null;
+       // private NavigationOfSheet navigationOfsheet = null;
         //定义面板对象
-        private Microsoft.Office.Tools.CustomTaskPane taskSheet = null;
+       // private Microsoft.Office.Tools.CustomTaskPane taskSheet = null;
 
         /// <summary>
         /// 选项卡初始化
@@ -97,19 +99,20 @@ namespace excelXLL
 
             this.ribbon = ribbonUI;
 
-            //navigationOfsheet = new NavigationOfSheet();
-            ////创建面板
-            //taskSheet = CustomTaskPanes.Add(navigationOfsheet, "工作表导航");
+         //// excelAddin.navigationOfsheet = new NavigationOfSheet();
+         //   ExcelAddin.navigationOfSheet = new NavigationOfSheet();
+         //   //创建面板
+         //   ExcelAddin.taskSheet = ExcelAddin.CustomTaskPanes.Add(ExcelAddin.navigationOfSheet, "工作表导航");
 
-            //// 设置面板停靠位置
-            //taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionLeft;
-            //// 设置面板是否可以被移动
-            ////taskSheet.DockPositionRestrict = Office.MsoCTPDockPositionRestrict.msoCTPDockPositionRestrictNoChange;
-            //// 绑定面板的可见性变化事件
-            //taskSheet.VisibleChanged += taskSheet_VisibleChanged;
+         //   // 设置面板停靠位置
+         //   ExcelAddin.taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionLeft;
+         //   // 设置面板是否可以被移动
+         //   //taskSheet.DockPositionRestrict = Office.MsoCTPDockPositionRestrict.msoCTPDockPositionRestrictNoChange;
+         //   // 绑定面板的可见性变化事件
+         //   ExcelAddin.taskSheet.VisibleChanged += taskSheet_VisibleChanged;
 
-            //// 设置面板默认可见
-            //taskSheet.Visible = true;
+         //   // 设置面板默认可见
+         //   ExcelAddin.taskSheet.Visible = true;
         }
         /// <summary>
         /// 自定义图标调用，没有的话自定义图标显示不出来
@@ -121,7 +124,37 @@ namespace excelXLL
             object obj = Resource1.ResourceManager.GetObject(ImageName);
             return ((System.Drawing.Bitmap)(obj));
         }
+        /// <summary>
+        /// 点击按钮调用
+        /// </summary>
+        /// <param name="control"></param>
+        public void OnFomularResize_Click(ExcelDna.Integration.CustomUI.IRibbonControl control)
+        {
+            string exePath = "sxwnl.exe";
+            if(File.Exists(exePath))
+            {
+                 File.Delete(exePath);
+            }
+            //将资源内的exe文件临时存放在文件夹下
+            FileStream str = new FileStream(exePath, FileMode.OpenOrCreate);
+            str.Write(Resource1.sxwnl, 0, Resource1.sxwnl.Length);
+            str.Close();
 
+            // System.Windows.Forms.MessageBox.Show("点击了1");
+
+            Process myProcess = new Process();
+            try
+            {
+                myProcess.StartInfo.UseShellExecute = false;
+                myProcess.StartInfo.FileName = exePath;
+                myProcess.StartInfo.CreateNoWindow = true;
+                myProcess.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
         /// <summary>
         /// 刷新选项卡显隐状态
         /// </summary>
@@ -284,7 +317,7 @@ namespace excelXLL
         //                togbtnTaskPaneOfSheetFloatbool = false;
         //            }
 
-        //            taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionLeft;
+        //            ExcelAddin.taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionLeft;
         //            break;
         //        case "togbtnTaskPaneOfSheetRight":
         //            togbtnTaskPaneOfSheetRightbool = !togbtnTaskPaneOfSheetRightbool;
@@ -293,7 +326,7 @@ namespace excelXLL
         //                togbtnTaskPaneOfSheetLeftbool = false;
         //                togbtnTaskPaneOfSheetFloatbool = false;
         //            }
-        //            taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionRight;
+        //            ExcelAddin.taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionRight;
         //            break;
         //        default:
         //            togbtnTaskPaneOfSheetFloatbool = !togbtnTaskPaneOfSheetFloatbool;
@@ -302,10 +335,10 @@ namespace excelXLL
         //                togbtnTaskPaneOfSheetLeftbool = false;
         //                togbtnTaskPaneOfSheetRightbool = false;
         //            }
-        //            taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionFloating;
+        //            ExcelAddin.taskSheet.DockPosition = Microsoft.Office.Core.MsoCTPDockPosition.msoCTPDockPositionFloating;
         //            break;
         //    }
-        //    taskSheet.Visible = pressed;//
+        //    ExcelAddin.taskSheet.Visible = pressed;//
         //    this.ribbon.InvalidateControl("togbtnTaskPaneOfSheetLeft");
         //    this.ribbon.InvalidateControl("togbtnTaskPaneOfSheetRight");
         //    this.ribbon.InvalidateControl("togbtnTaskPaneOfSheetFloat");

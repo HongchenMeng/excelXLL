@@ -14,6 +14,9 @@ namespace excelXLL
     /// </summary>
     public class ExcelAddin:IExcelAddIn
     {
+       //public static NavigationOfSheet navigationOfSheet=null;
+       // public static Microsoft.Office.Tools.CustomTaskPane taskSheet = null;
+       // public static Microsoft.Office.Tools.CustomTaskPaneCollection CustomTaskPanes=null;
         /// <summary>
         /// 启动时注册IntelliSense函数，实现自定义函数参数提示
         /// 调试时会报错:托管调试助手“LoaderLock”在“C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE”中检测到问题。勾选不中断调试，重新运行即可
@@ -23,12 +26,18 @@ namespace excelXLL
             IntelliSenseServer.Register();
             //ExcelDna.Logging.LogDisplay.Show();
             //ExcelDna.Logging.LogDisplay.DisplayOrder = ExcelDna.Logging.DisplayOrder.NewestFirst;
-            NavigationOfSheet navigationOfSheet = new NavigationOfSheet();
         }
-
+        /// <summary>
+        /// 退出时调用AutoClose
+        /// </summary>
         public void AutoClose()
         {
             // CONSIDER: Do we implement an explicit call here, or is the AppDomain Unload event good enough?
+            string exePath = "sxwnl.exe";
+            if (System.IO.File.Exists(exePath))
+            {
+                System.IO.File.Delete(exePath);
+            }
         }
     }
 }

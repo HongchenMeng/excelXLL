@@ -41,9 +41,9 @@
           <checkBox id="checkBoxShowTabAgur" label="红尘工具" getPressed="checkBoxShowTabgetPressed" onAction="OAcheckBoxShowTab"/>
           <checkBox id="checkBoxShowTabAddIns" label="加 载 项" getPressed="checkBoxShowTabgetPressed" onAction="OAcheckBoxShowTab"/>
         </group>
-        <group id="GroupTest" label="自定义图标测试">
-          <button id="OnFomularResize" onAction="OnFomularResize_Click" label="自定义1" image="img_star" size="large" />
-          <button id="OnFomularDelete" onAction="OnFomularDelete_Click" label="自定义2" image="img_star_blue" size="large" />
+        <group id="GroupTest" label="功能">
+          <button id="OnFomularResize" onAction="OnFomularResize_Click" label="万年历" image="wnl" size="large" />
+          <button id="OnFomularDelete" onAction="OnFomularDelete_Click" label="自定义2" image="img_star" size="large" />
           <button id="OnFomularValue" onAction="OnFomularValue_Click" label="自定义3" image="img_star_red" size="large" />
         </group>
       </tab>
