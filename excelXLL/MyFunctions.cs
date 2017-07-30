@@ -74,131 +74,9 @@ namespace excelXLL
             IDCardHelper idCardHelper = new IDCardHelper(ID);
             return idCardHelper.Age;
         }
-        /// <summary>
-        /// 获取干支
-        /// </summary>
-        /// <param name="dt1"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取干支")]
-        public static string GetNL([ExcelArgument(Description = "日期")] string  dt1)
-        {
-            DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
-            CalendarInfo ci = new CalendarInfo(dt);
-            //return ci.GanZhiAnimalYearString + ci.GanZhiMonthString + ci.GanZhiDateString;
-            return ci.ChineseYearString + ci.ChineseMonthString + ci.ChineseDayString;
-        }
-        /// <summary>
-        /// 获取润月月份
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取润月月份")]
-        public static int GetLeapMonth([ExcelArgument(Description = "年份")] int year)
-        {
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
-            int a= cc.GetLeapMonth(year);
-            if (a > 0)
-                --a;
-            return a;
-        }
-        /// <summary>
-        /// 获取月份天数
-        /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取月份天数")]
-        public static int GetLeapDaysOfMonth([ExcelArgument(Description = "年份")] int year, [ExcelArgument(Description = "月份")] int month)
-        {
 
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
 
-            int a = cc.GetLeapMonth(year);
-            if (a > 0)
-                --a;
 
-            if(a>0)
-            {
-                if(month>=a)
-                {
-                    return cc.GetDaysInMonth(year, month+1, 1);
-                }
-                else
-                {
-                    return cc.GetDaysInMonth(year, month, 1);
-                }
-            }
-            else
-            {
-                return cc.GetDaysInMonth(year, month, 1);
-            }
-            
-        }
-        /// <summary>
-        /// 获取月份天数
-        /// </summary>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取月份1~13天数")]
-        public static int GetLeapDaysOfMonth2([ExcelArgument(Description = "年份")] int year, [ExcelArgument(Description = "月份")] int month)
-        {
-
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
-            if (month >= 13 & cc.GetLeapMonth(year) <= 0)
-                return 0;
-                return cc.GetDaysInMonth(year, month, 1);
-
-        }
-        /// <summary>
-        /// 获取润月天数
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取润月天数")]
-        public static int GetDaysOfLeapdMonth([ExcelArgument(Description = "年份")] int year)
-        {
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
-            int a = cc.GetLeapMonth(year);
-            if(a>0)
-            {
-                return cc.GetDaysInMonth(year, a, 1);
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        /// <summary>
-        /// 获取春节月份
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节月份")]
-        public static int GetMonth([ExcelArgument(Description = "年份")] int year)
-        {
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
-
-            return cc.ToDateTime(year, 1, 1, 0, 0, 0, 0).Month;
-        }
-        /// <summary>
-        /// 获取春节日期
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取春节日期")]
-        public static int GetDate([ExcelArgument(Description = "年份")] int year)
-        {
-            System.Globalization.ChineseLunisolarCalendar cc;
-            cc = new System.Globalization.ChineseLunisolarCalendar();
-
-            return cc.ToDateTime(year, 1, 1, 0, 0, 0, 0).Day;
-        }
         /// <summary>
         /// 获取农历
         /// </summary>
@@ -226,13 +104,24 @@ namespace excelXLL
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取公历日期")]
         public static string GetSolarDate([ExcelArgument(Description = "农历年份")] int lunarYear, [ExcelArgument(Description = "农历月份")] int lunarMonth, [ExcelArgument(Description = "农历日")] int lunarDay, [ExcelArgument(Description = "该月是否农历润月")] bool theMonthIsLeap)
         {
-            //DateTime dt = DateTime.ParseExact(dt1, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.None);
-            //DateTimeLunar dl = new DateTimeLunar(dt);
-            ////dl.SolarDate = dt;
             DateTimeLunar dl = new DateTimeLunar();
             DateTime dt = dl.GetSolarDate(lunarYear, lunarMonth, lunarDay, theMonthIsLeap);
 
             return dt.ToShortDateString();
+        }
+        /// <summary>
+        /// 获取农历每月的天数
+        /// </summary>
+        /// <param name="lunarYear">农历年</param>
+        /// <param name="lunarMonth">农历月</param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历每月天数")]
+        public static int GetDaysInLunarMonth([ExcelArgument(Description = "农历年份")] int lunarYear, [ExcelArgument(Description = "农历月份")] int lunarMonth)
+        {
+            DateTimeLunar dl = new DateTimeLunar();
+            int days = dl.GetDaysInLunarMonth(lunarYear, lunarMonth);
+
+            return days;
         }
     }
 }

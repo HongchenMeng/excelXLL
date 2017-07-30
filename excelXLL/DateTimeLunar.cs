@@ -96,7 +96,7 @@ namespace excelXLL
      0x04B64E,0x0A5743,0x452738,0x0D264A,0x8E933E, //2081-2090
 
      0x0D5252,0x0DAA47,0x66B53B,0x056D4F,0x04AE45,
-     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 ,0x005249,//2091-2100
+     0x4A4EB9,0x0A4D4C,0x0D1541,0x2D92B5 ,0x0D5249,//2091-2100
         };
 
         #endregion 农历常量
@@ -361,11 +361,7 @@ namespace excelXLL
 
             for (; _LunarMonth <= 13; _LunarMonth++)
             {
-                int daysOfLunarMonth = 29;
-                if (((_LunarData >> (20 - _LunarMonth)) & 0x1) == 1)//大月就30天
-                {
-                    daysOfLunarMonth = 30;
-                }
+                int daysOfLunarMonth = GetDaysInLunarMonth(_LunarYear,_LunarMonth);
                 if (_DayOfLunarYear <= daysOfLunarMonth)
                 {
                     break;
@@ -506,6 +502,22 @@ namespace excelXLL
 
             return dt2;
         }
+        public int GetDaysInLunarMonth(int lunarYear,int lunarMonth)
+        {
+            int lunarData = GetLunarData(lunarYear);
+            //获得该年润月份
+            int leapMonth = (lunarData >> 20) & 0xf;
+            if(leapMonth==0 && lunarMonth==13)
+            {
+                return 0;
+            }
+            int daysOfLunarMonth = 29;
+            if (((lunarData >> (20 - lunarMonth)) & 0x1) == 1)//大月就30天
+            {
+                daysOfLunarMonth = 30;
+            }
+            return daysOfLunarMonth;
+        }
         /// <summary>
         /// 返回指定年份春节所对应的公历日期
         /// </summary>
@@ -579,64 +591,6 @@ namespace excelXLL
             int days = ts.Days;
             return days;
         }
-
-
-        /// <summary>
-        /// 计算指定公历日期距离元旦几天（是公历年中的第几天）
-        /// </summary>
-        /// <param name="dt">公历日期</param>
-        /// <returns></returns>
-        //public int DaysOfSolarFirstDayToThisSolarDate(DateTime dt)
-        //{
-        //    int month = dt.Month;
-        //    int day = dt.Day;
-
-        //    int[] Yday;//每月1日是公历年的第几天
-        //    if (LeapSolarYear(dt.Year))
-        //    {
-        //        Yday = SolarLeapYday;
-        //    }
-        //    else
-        //    {
-        //        Yday = SolarNormalYday;
-        //    }
-
-        //    return Yday[month - 1] + day - 1;
-        //}
-
-        /// <summary>
-        /// 计算指定年份 春节距离元旦的天数
-        /// </summary>
-        /// <param name="year"></param>
-        /// <returns></returns>
-        //public int DaysOfSolarFirstDayToThisSolarDate(int year)
-        //{
-        //    DateTime dt = GetLunarFirstDayToSolarDate(year);
-        //    return DaysOfSolarFirstDayToThisSolarDate(dt);
-        //}
-
-        /// <summary>
-        /// 计算指定公历日期是农历年的第几天
-        /// </summary>
-        /// <param name="dt">公历日期</param>
-        /// <returns></returns>
-        //public int DaysOfLunarFirstDayToThisSolarDate(DateTime dt)
-        //{
-        //    int year = dt.Year;
-        //    int d = DaysOfSolarFirstDayToThisSolarDate(dt) - DaysOfSolarFirstDayToThisSolarDate(year) + 1;
-        //    if (d < 0)//农历年份比公历年份小
-        //    {
-        //        int lunardata = GetLunarData(year - 1);
-
-        //        int sm = (lunardata & 0x60) >> 5;//春节月
-        //        int sd = (lunardata & 0x1f);//春节日
-
-        //        DateTime dt2 = new DateTime(year - 1, 12, 31);
-        //        d = DaysOfSolarFirstDayToThisSolarDate(dt2) - DaysOfSolarFirstDayToThisSolarDate(dt2.Year) + 1 + DaysOfSolarFirstDayToThisSolarDate(dt);
-        //    }
-            
-        //    return d;
-        //}
         /// <summary>
         /// 指定农历日期距离当年春节的天数，春节这一天为0
         /// </summary>
@@ -663,11 +617,7 @@ namespace excelXLL
             int days = 0;
             for (int m=1; m <lunarMonth; m++)
             {
-                int daysOfLunarMonth = 29;
-                if (((_LunarData >> (20 - _LunarMonth)) & 0x1) == 1)//大月就30天
-                {
-                    daysOfLunarMonth = 30;
-                }
+                int daysOfLunarMonth = GetDaysInLunarMonth(lunarYear,m);
                 days = days + daysOfLunarMonth;
             }
             days = days + lunarDay-1;
