@@ -78,16 +78,39 @@ namespace excelXLL
         /// <summary>
         /// 获取农历,无限制
         /// </summary>
-        /// <param name="dt"></param>
+        /// <param name="dtStr"></param>
         /// <returns></returns>
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
-        public static string GetLunarDate([ExcelArgument(Description = "年份")] DateTime dt)
-        {
+        public static string GetLunarDate([ExcelArgument(Description = "时间")] string dtStr)
+        { 
+            string[] dd = dtStr.Split('/');
+            int y = int.Parse(dd[0]);
+            int m = int.Parse(dd[1]);
+            int d = int.Parse(dd[2]);
+            DateTime dt = new DateTime(y, m, d);
             ChinaDate cd = new ChinaDate(dt);
 
             return cd.nlDate;
         }
 
+        /// <summary>
+        /// 获取农历,无限制
+        /// </summary>
+        /// <param name="dtStr"></param>
+        /// <returns></returns>
+        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
+        public static string GetGZ([ExcelArgument(Description = "时间")] string dtStr)
+        {
+            string[] dd = dtStr.Split('/');
+            int y = int.Parse(dd[0]);
+            int m = int.Parse(dd[1]);
+            int d = int.Parse(dd[2]);
+            DateTime dt = new DateTime(y, m, d);
+            ChinaDate cd = new ChinaDate(dt);
+
+            return cd.gzDate;
+        }
+        #region 查表法获得农历
         /// <summary>
         /// 获取农历
         /// </summary>
@@ -116,7 +139,7 @@ namespace excelXLL
 
             return dl.GetLunarDate((LunarString)ls);
         }
-
+        #endregion
         /// <summary>
         /// 获取公历日期
         /// </summary>
