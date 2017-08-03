@@ -66,17 +66,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalendarLunar.cs" />
-    <Compile Include="CalendarLunarData.cs" />
-    <Compile Include="CalendarSolar.cs" />
-    <Compile Include="CalendarSolarData.cs" />
     <Compile Include="checkAreaNumbercs.cs" />
     <Compile Include="ChinaDate.cs" />
-    <Compile Include="ChinaDtaeTime.cs" />
-    <Compile Include="ChineseCalendarException.cs" />
-    <Compile Include="ChineseCalendarFormatter.cs" />
-    <Compile Include="ChineseCalendarHelper.cs" />
-    <Compile Include="DateHoliday.cs" />
     <Compile Include="DateTimeLunar.cs" />
     <Compile Include="MyFunctions.cs" />
     <Compile Include="ExcelAddin.cs" />
@@ -156,6 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\wnl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\ExcelDna.AddIn.0.34.6\tools\ExcelDna.AddIn.targets" Condition="Exists('..\packages\ExcelDna.AddIn.0.34.6\tools\ExcelDna.AddIn.targets')" />

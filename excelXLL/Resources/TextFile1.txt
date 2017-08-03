@@ -1,0 +1,141 @@
+﻿Rem ************************************************************
+Rem 作    者： 罗刚君
+Rem 功    能： 制作鼠标移动着色工具
+Rem 版　　本： 2.0
+Rem 图书名称： 《 Excel VBA程序开发自学宝典(第2版) 》
+Rem ************************************************************
+Rem  ╭⌒╮⌒╮    ︸ ︷  ﹀ ︿
+Rem ╱◥██◣ Home  ﹀ ︷  ︸
+Rem |田|田 田|﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏   |
+Rem ╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬ |
+Rem 反馈邮箱:excelbbx@163.com
+Rem 售后服务QQ群：68372500
+Rem 罗刚君图书大全：http://excelbbx.net/book.htm
+Rem ************************************************************
+Rem VBA知识点：API、功能区开发、插件设计
+
+'声明关于鼠标坐标相关的变量
+Declare Function GetCursorPos Lib "user32" (lpPoint As POINTAPI) As Long
+Type POINTAPI
+  x As Long
+  Y As Long
+End Type
+Dim 坐标 As POINTAPI
+'声明颜色选择器的相关的变量
+Private Type ChooseColor
+  lStructSize As Long
+  hwndOwner As Long
+  hInstance As Long
+  rgbResult As Long
+  lpCustColors As String
+  Flags As Long
+  lCustData As Long
+  lpfnHook As Long
+  lpTemplateName As String
+End Type
+Private Declare Function ChooseColorAPI Lib "comdlg32.dll" Alias "ChooseColorA" (pChoosecolor As ChooseColor) As Long
+Dim CustomColors() As Byte
+'声明其它变量
+Dim 原单元格 As Range, 关闭 As Boolean, 当前单元格 As Range, 着色方式 As String
+Sub Mouse(control As IRibbonControl) '与三个菜单相关联的SUB过程
+  着色方式 = control.ID '获取当前单击的按钮的ID
+  Call MouseColor(着色方式) '调用同一个过程，但是由于ID不同，所以会执行不同的代码
+End Sub
+'主体程序:对鼠标移过的行或者列进行着色
+Sub MouseColor(Str As String)
+'获取颜色
+  Dim ChColor As ChooseColor, CustColor(16) As Long, ReturnCol As Long, rng As Range, CutOrCopy As Integer
+  ChColor.lStructSize = Len(ChColor)
+  ChColor.hInstance = 1
+  ChColor.lpCustColors = StrConv(CustomColors, vbUnicode)
+  ChColor.Flags = 0
+  ReturnCol = ChooseColorAPI(ChColor)
+  If ReturnCol <> 0 Then Col = ChColor.rgbResult Else Exit Sub
+  关闭 = False '将变量赋值是false
+  Do  '循环执行过程
+    If 关闭 = True Then Exit Do  '如果变量"关闭"为True时就停止循环
+    GetCursorPos 坐标  '获取鼠标的坐标值
+    On Error Resume Next
+    Set 当前单元格 = ActiveWindow.RangeFromPoint(坐标.x, 坐标.Y)  '根据鼠标的坐标得到鼠标指针下的单元格的地址
+    If 当前单元格 Is Nothing Then  '如果鼠标指针下不是单元格
+      [ColorCells].FormatConditions.Delete  '删除名称为ColorCells的区域的条件格式
+      ActiveWorkbook.Names("ColorCells").Delete  '删除名称ColorCells
+    Else
+      If 当前单元格.Address <> 原单元格.Address Then  '如果当前鼠标指针下的单元格与记录的上一个地址不等
+        [ColorCells].FormatConditions.Delete  '删除条件格式
+          If Str = "A" Then ' 如果菜单按钮是第一个(行着色)
+            '将当前行中可见区域命名为"ColorCells".需要注意一点:Range部分是为了得到可见区域,而不需要把整行都添加颜色.那样会浪费内存.
+            Intersect(当前单元格.EntireRow, Range(当前单元格.EntireRow.Cells(1), ActiveWindow.VisibleRange)).Name = "ColorCells"
+          ElseIf Str = "B" Then  ' 如果菜单按钮是第一个(列着色)
+            Intersect(当前单元格.EntireColumn, Range(当前单元格.EntireColumn.Cells(1), ActiveWindow.VisibleRange)).Name = "ColorCells"
+          Else  '否则 将当前行\当前列的可见区域命名为 "ColorCells".
+            Intersect(Union(当前单元格.EntireColumn, 当前单元格.EntireRow), Range([a1], ActiveWindow.VisibleRange)).Name = "ColorCells"
+          End If
+        '如果剪切模式为True,那么调用过程"复制对象",切将复制的对果赋予变量rng
+        If Application.CutCopyMode Then Set rng = 复制对象 Else Set rng = Nothing
+        CutOrCopy = Application.CutCopyMode  '记录当前的剪切模式
+        With [ColorCells].FormatConditions  '引用名称ColorCells所代表的区或的条件格式
+          .Delete      '删除条件格式
+          .Add xlExpression, , "TRUE"  '添加条件格式
+          .Item(1).Interior.Color = Col  '设置条件格式的颜色
+        End With
+        If CutOrCopy = xlCopy Then rng.Copy  'if 当前的剪切模式为复制状态,则复制rng区域
+        If CutOrCopy = xlCut Then rng.Cut   'if 当前的剪切模式为剪切状态,则剪切rng区域
+      End If
+      Set 原单元格 = 当前单元格  '将变量"当前单元格"赋予变量"原单元格"
+    End If
+    DoEvents  '转交控制权,此处的目的是释放内存,否则一旦执行后,就再也不能执行其它任何工作了
+  Loop
+End Sub
+Sub CloseCol(control As IRibbonControl, pressed As Boolean)  '单击第四个菜单时执行的过程，用于关闭或者重启着色
+   '如果按钮呈按下状态，则将变量赋值True，否则再次调用过程 MouseColor
+  If pressed Then 关闭 = True Else If Len(着色方式) > 0 Then Call MouseColor(着色方式)
+End Sub
+
+
+=============================================
+
+Private Declare Function GlobalLock Lib "kernel32" (ByVal ClipContent As Long) As Long
+Private Declare Function GlobalUnlock Lib "kernel32" (ByVal ClipContent As Long) As Long
+Private Declare Function GlobalSize Lib "kernel32" (ByVal ClipContent As Long) As Long
+Private Declare Function OpenClipboard Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function CloseClipboard Lib "user32" () As Long
+Private Declare Function GetClipboardData Lib "user32" (ByVal wFormat As Long) As Long
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Public Function 复制对象() As Range
+  Dim Myarr() As Byte, ClipContent As Long, nClipsize As Long, lpData As Long, sSource As String, sTemp() As String
+  Dim 工作簿 As String, 工作表 As String, 单元格 As String
+  On Error GoTo err
+  OpenClipboard 0&  '打开剪贴板
+  ClipContent = GetClipboardData(49154)  '获取剪贴板的数据,49154在此处代表剪贴板中有Range对象
+  If CBool(ClipContent) Then  '如果有数据
+    '获取数据
+    nClipsize = GlobalSize(ClipContent)
+    lpData = GlobalLock(ClipContent)  '锁定内存中指定的内存块，并返回一个地址值
+    If lpData <> 0 Then
+      ReDim Myarr(0 To nClipsize - 1) As Byte
+      CopyMemory Myarr(0), ByVal lpData, nClipsize  '将数据复制到数组变量中
+      sSource = StrConv(Myarr, vbUnicode)  '得到一个包括工作簿路径的单元格对象地址,R1C1格式
+      sTemp = Split(sSource, Chr(0))  '从sSource中获取工作簿\工作表\单元格地址部分字符串,删除其它字符
+      '获取工作簿名称
+      If InStr(sTemp(1), "\") Then 工作簿 = Mid(sTemp(1), InStrRev(sTemp(1), "\") + 1) Else 工作簿 = sTemp(1)
+      工作表 = Left(sTemp(2), InStr(sTemp(2), "!") - 1)  '获取工作表名称
+      单元格 = RCTransition(Mid(sTemp(2), InStr(sTemp(2), "!") + 1))   '获取单元格地址
+      Set 复制对象 = Workbooks(工作簿).Sheets(工作表).Range(单元格)  '引用转换后的详细地址,(该地址由剪贴板获取)
+    End If
+    GlobalUnlock ClipContent  '解除锁定的内存块
+  Else
+    Set 复制对象 = Nothing
+  End If
+  CloseClipboard  '关闭剪贴板
+err:
+End Function
+'将A1C1形式的引用转换成A1形式的引用,例如"R2C56"转换成"$BD$2","R2C56:R44C100"转换成"$BD$2:$CV$44",
+Function RCTransition(ByVal rangeAdd As String) As String
+  If InStr(rangeAdd, ":") Then  '如果有":"
+'将都会号":"前后的字符串分两次转换再串连起来
+    RCTransition = RCTransition(Split(rangeAdd, ":")(0)) & ":" & RCTransition(Split(rangeAdd, ":")(1))
+  Else  '否则将R1C1模式的单元格地址转换成A1引用样式
+    RCTransition = Application.ConvertFormula(rangeAdd, xlR1C1, xlA1)
+  End If
+End Function

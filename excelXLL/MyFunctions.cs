@@ -76,9 +76,9 @@ namespace excelXLL
         }
 
         /// <summary>
-        /// 获取农历,无限制
+        /// 获取农历
         /// </summary>
-        /// <param name="dtStr"></param>
+        /// <param name="dtStr">时间字符串</param>
         /// <returns></returns>
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
         public static string GetLunarDate([ExcelArgument(Description = "时间")] string dtStr)
@@ -94,9 +94,9 @@ namespace excelXLL
         }
 
         /// <summary>
-        /// 获取农历,无限制
+        /// 获取农历干支
         /// </summary>
-        /// <param name="dtStr"></param>
+        /// <param name="dtStr">时间字符串</param>
         /// <returns></returns>
         [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
         public static string GetGZ([ExcelArgument(Description = "时间")] string dtStr)
@@ -110,36 +110,6 @@ namespace excelXLL
 
             return cd.gzDate;
         }
-        #region 查表法获得农历
-        /// <summary>
-        /// 获取农历
-        /// </summary>
-        /// <param name="dt1">公历字符串</param>
-        /// <param name="ls">农历日期格式</param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
-        public static string GetLunarDate1([ExcelArgument(Description = "年份")] string dt1, [ExcelArgument(Description = "农历日期格式")] int ls)
-        {
-         
-            DateTimeLunar dl = new DateTimeLunar(dt1);
-
-            return dl.GetLunarDate((LunarString)ls);
-        }
-        /// <summary>
-        /// 获取农历
-        /// </summary>
-        /// <param name="dt">公历日期</param>
-        /// <param name="ls">农历日期格式</param>
-        /// <returns></returns>
-        [ExcelFunction(Category = "test测试分类", IsMacroType = true, Description = "获取农历日期")]
-        public static string GetLunarDate2([ExcelArgument(Description = "年份")] DateTime dt, [ExcelArgument(Description = "农历日期格式")] int ls)
-        {
-            DateTimeLunar dl = new DateTimeLunar(dt);
-            //dl.SolarDate = dt;
-
-            return dl.GetLunarDate((LunarString)ls);
-        }
-        #endregion
         /// <summary>
         /// 获取公历日期
         /// </summary>
