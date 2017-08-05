@@ -69,6 +69,7 @@
     <Compile Include="checkAreaNumbercs.cs" />
     <Compile Include="ChinaDate.cs" />
     <Compile Include="DateTimeLunar.cs" />
+    <Compile Include="ExcelClass.cs" />
     <Compile Include="MyFunctions.cs" />
     <Compile Include="ExcelAddin.cs" />
     <Compile Include="IDCardHelper.cs" />

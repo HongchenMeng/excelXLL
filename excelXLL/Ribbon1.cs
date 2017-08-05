@@ -155,6 +155,11 @@ namespace excelXLL
                 Console.WriteLine(e.Message);
             }
         }
+        public void OnFomularDelete_Click(ExcelDna.Integration.CustomUI.IRibbonControl control)
+        {
+            ExcelClass ec = new ExcelClass();
+            System.Windows.Forms.MessageBox.Show(ec.hWnd.ToString());
+        }
         /// <summary>
         /// 刷新选项卡显隐状态
         /// </summary>
