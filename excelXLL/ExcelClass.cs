@@ -19,13 +19,22 @@ namespace excelXLL
 {
    public class ExcelClass
     {
+
+        private const int LOGPIXELSX = 88; //沿屏幕宽度每逻辑英寸的像素数，在多显示器系统中，该值对所显示器相同；
+        private const int LOGPIXELSY = 90;//沿屏幕高度每逻辑英寸的像素数，在多显示器系统中，该值对所显示器相同；
+        private const int TWIPSPERINCH = 1440;
+        private int dpiX;//显示器像素
+        private int dpiY;
         /// <summary>
         /// 获取当前Excel应用程序
         /// </summary>
         public Excel.Application ExcelApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
         private Excel.Workbook _ActWorkBook;
         private Excel.Range _ActCell;
-        private POINT _ActCellPoint = new POINT(); //定义一个坐标结构
+        private Excel.Range _ActCellOffset;
+        private POINT _ActCellPoint1 = new POINT(); //定义一个坐标结构
+        private POINT _ActCellPoint2 = new POINT(); //定义一个坐标结构
+        //private RECT _rect = new RECT();
 
         private string _ActWorkBookName;
 
@@ -36,23 +45,33 @@ namespace excelXLL
         {
             _ActWorkBook = ExcelApp.ActiveWorkbook;
             _ActWorkBookName = _ActWorkBook.Name;
-            _ActCell = ExcelApp.ActiveCell;
-            int x =(int) _ActCell.Left;
-            int y =(int) _ActCell.Top;
-            int xp= ExcelApp.ActiveWindow.PointsToScreenPixelsX(_ActCell.Width);
-            int yp= ExcelApp.ActiveWindow.PointsToScreenPixelsY(_ActCell.Height);
-            _ActCellPoint.X = ExcelApp.ActiveWindow.PointsToScreenPixelsX(_ActCell.Left);
-            _ActCellPoint.Y = ExcelApp.ActiveWindow.PointsToScreenPixelsY(_ActCell.Top);
+             _ActCell = ExcelApp.ActiveCell;
+            
+            _ActCellOffset = _ActCell.Offset[1, 1];
 
-           _hWnd= WindowFromPoint(_ActCellPoint);
-            //IntPtr hd1 = FindWindow("XLMAIN", _ActWorkBookName+ " - Excel");
-            //IntPtr hd2 = FindWindowEx(hd1, IntPtr.Zero, "XLDESK", null);//"XLDESK"
-            //_hWnd = FindWindowEx(hd2, IntPtr.Zero, "EXCEL7", _ActWorkBookName);// "EXCEL7"
-          bool stc=  ScreenToClient(_hWnd,out _ActCellPoint);
+            _ActCellPoint1.X = ExcelApp.ActiveWindow.PointsToScreenPixelsX(0)+Point2Pixel(_ActCell.Left,LOGPIXELSX);
+            _ActCellPoint1.Y = ExcelApp.ActiveWindow.PointsToScreenPixelsY(0)+Point2Pixel(_ActCell.Top,LOGPIXELSY);
+            
+            _ActCellPoint2.X = ExcelApp.ActiveWindow.PointsToScreenPixelsX(0)+Point2Pixel(_ActCellOffset.Left,LOGPIXELSX);
+            _ActCellPoint2.Y = ExcelApp.ActiveWindow.PointsToScreenPixelsY(0)+Point2Pixel(_ActCellOffset.Top,LOGPIXELSY);
+            // _hWnd= WindowFromPoint(_ActCellPoint);
+            IntPtr hd1 = FindWindow("XLMAIN", _ActWorkBookName + " - Excel");
+            IntPtr hd2 = FindWindowEx(hd1, IntPtr.Zero, "XLDESK", null);//"XLDESK"
+            _hWnd = FindWindowEx(hd2, IntPtr.Zero, "EXCEL7", _ActWorkBookName);// "EXCEL7"
+
+            ScreenToClient(_hWnd,ref _ActCellPoint1);
+            int x1 = _ActCellPoint1.X;
+            int y1 = _ActCellPoint1.Y;
+
+            ScreenToClient(_hWnd, ref _ActCellPoint2);
+            int x2 = _ActCellPoint2.X;
+            int y2 = _ActCellPoint2.Y;
             // _ActCellPoint=_hWnd.ToPointer()
 
-            g= Graphics.FromHwnd(_hWnd);
-            g.DrawRectangle(new Pen(Color.Red, 3), _ActCellPoint.X, _ActCellPoint.Y, 50, 50);
+            g = Graphics.FromHwnd(_hWnd);
+            g.DrawRectangle(new Pen(Color.Red, 3), x1,y1, x2-x1,y2- y1);
+          //  g.DrawRectangle(new Pen(Color.Red, 3), _rect);
+          //  g.DrawRectangle(new Pen(Color.Yellow, 5), x2, y2, 10, 50);
             g.Dispose();
 
 
@@ -77,7 +96,7 @@ namespace excelXLL
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hChildAfter, string lpszClass, string lpszWindowText);
         [DllImport("user32", EntryPoint = "ScreenToClient")]
-        public static extern bool ScreenToClient(IntPtr hwnd,out POINT lpPoint);
+        public static extern bool ScreenToClient(IntPtr hwnd,ref POINT lpPoint);
 
         /// <summary>
         /// 获得包含指定点的窗口的句柄。
@@ -89,7 +108,46 @@ namespace excelXLL
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(POINT pt);
 
+        /// <summary>
+        /// 获取指定设备的性能参数该方法将所取得的硬件设备信息保存到一个D3DCAPS9结构中。
+        /// </summary>
+        /// <param name="hwnd">句柄</param>
+        /// <param name="nIndex">根据GetDeviceCaps索引表所示常数确定返回信息的类型</param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        public static extern int GetDeviceCaps(IntPtr hwnd, int nIndex);
+        /// <summary>
+        /// 获取桌面句柄
+        /// </summary>
+        /// <param name="hWnd">句柄</param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+            /// <summary>
+            /// 释放设备上下文环境（DC）供其他应用程序使用
+            /// </summary>
+            /// <param name="hWnd">指向要释放的设备上下文环境所在的窗口的句柄。</param>
+            /// <param name="hdc">指向要释放的设备上下文环境的句柄</param>
+            /// <returns></returns>
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hdc);
+        /// <summary>
+        /// 获取显示器像素
+        /// </summary>
+        /// <param name="xy"></param>
+        /// <param name="LOGPIXELSxy"></param>
+        /// <returns></returns>
+        public int Point2Pixel(int xy,int LOGPIXELSxy)
+        {
+            IntPtr inP = GetDC(IntPtr.Zero);
 
+            int xy1 = GetDeviceCaps(inP, LOGPIXELSxy);
+            int xy2 = xy / LOGPIXELSxy * xy1;
+            ReleaseDC(IntPtr.Zero, inP);
+
+            return xy2;
+
+        }
         public string ActWorkBookName
         {
             get
@@ -129,10 +187,10 @@ namespace excelXLL
             public int Top;
             public int Right;
             public int Bottom;
-            public System.Drawing.Rectangle ToRectangle()
-            {
-                return new System.Drawing.Rectangle(Left, Top, Right - Left, Bottom - Top);
-            }
+            //public System.Drawing.Rectangle ToRectangle()
+            //{
+            //    return new System.Drawing.Rectangle(Left, Top, Right - Left, Bottom - Top);
+            //}
         }
 
     }
