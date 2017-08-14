@@ -1,0 +1,12 @@
+
+
+安装EXCEL DNA：
+Install-Package Excel-DNA
+
+启动外部程序：
+C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE
+
+命令行参数：
+"excelXLL-Addin.xll"
+
+实现IExcelAddIn接口，注册 IntelliSenseServer.Register();

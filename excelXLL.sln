@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "excelXLL", "excelXLL\excelXLL.csproj", "{4EAEACD6-4F8D-4CCB-AE57-F82248E42EDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{E07CB126-A876-48B4-B92A-44B180B9C89D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{4EAEACD6-4F8D-4CCB-AE57-F82248E42EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EAEACD6-4F8D-4CCB-AE57-F82248E42EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EAEACD6-4F8D-4CCB-AE57-F82248E42EDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E07CB126-A876-48B4-B92A-44B180B9C89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E07CB126-A876-48B4-B92A-44B180B9C89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E07CB126-A876-48B4-B92A-44B180B9C89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E07CB126-A876-48B4-B92A-44B180B9C89D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
